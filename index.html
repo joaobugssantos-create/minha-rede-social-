@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SocialFlow &mdash; Conecte seu Mundo</title>
+  <title>SocialFlow &mdash; Dark Mode</title>
   <style>
     /* ===================== RESET & VARIÁVEIS ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --primary:   #6366f1; /* Indigo moderno */
-      --primary-h: #4f46e5;
-      --bg:        #f1f5f9;
-      --card:      #ffffff;
-      --text:      #0f172a;
-      --muted:     #64748b;
-      --border:    #e2e8f0;
+      --primary:   #1e3a8a; /* Azul escuro profundo */
+      --primary-h: #1e40af;
+      --bg:        #000000; /* Preto predominante */
+      --card:      #111827; /* Cinza muito escuro para contraste */
+      --text:      #ffffff; /* Branco */
+      --muted:     #94a3b8;
+      --border:    #1f2937;
       --danger:    #ef4444;
       --success:   #10b981;
-      --radius:    12px;
-      --shadow:    0 4px 6px -1px rgba(0,0,0,0.1);
+      --radius:    14px;
+      --shadow:    0 4px 12px rgba(0,0,0,0.5);
       --transition: .2s ease;
     }
 
@@ -37,7 +37,7 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
+      background: var(--bg);
     }
 
     .auth-card {
@@ -47,23 +47,27 @@
       width: 100%;
       max-width: 380px;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(30, 58, 138, 0.2);
     }
 
     .auth-logo h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 900;
       margin-bottom: 0.5rem;
-      color: var(--primary);
+      color: var(--text);
+      letter-spacing: -1.5px;
     }
 
+    .auth-logo span { color: var(--primary); }
+
     .form-group { margin-bottom: 1.5rem; text-align: left; }
-    .form-group label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; color: var(--muted); }
-    .form-group input { width: 100%; padding: 0.8rem 1rem; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem; outline: none; transition: var(--transition); }
-    .form-group input:focus { border-color: var(--primary); }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--muted); text-transform: uppercase; }
+    .form-group input { width: 100%; padding: 0.9rem 1.2rem; border: 1px solid var(--border); border-radius: 12px; font-size: 1rem; outline: none; background: #000; color: #fff; transition: var(--transition); }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.3); }
 
     .btn { cursor: pointer; border: none; font-weight: 700; transition: var(--transition); }
-    .btn-primary { background: var(--primary); color: #fff; padding: 0.8rem 1.5rem; border-radius: 10px; width: 100%; }
+    .btn-primary { background: var(--primary); color: #fff; padding: 0.9rem 1.5rem; border-radius: 12px; width: 100%; }
     .btn-primary:hover { background: var(--primary-h); transform: translateY(-1px); }
 
     /* ===================== APP PRINCIPAL ===================== */
@@ -80,88 +84,144 @@
       z-index: 10;
     }
 
-    .nav-brand { font-size: 1.5rem; font-weight: 900; color: var(--primary); letter-spacing: -1px; }
+    .nav-brand { font-size: 1.6rem; font-weight: 900; color: #fff; letter-spacing: -1.5px; }
+    .nav-brand span { color: var(--primary); }
 
-    /* Layout principal de 3 colunas */
+    /* Layout principal */
     .main-layout {
       display: grid;
-      grid-template-columns: 300px 1fr 320px;
+      grid-template-columns: 280px 1fr 300px;
       gap: 1.5rem;
       max-width: 1400px;
       margin: 0 auto;
-      padding: 1.5rem;
+      padding: 1rem 1.5rem;
       height: calc(100vh - 60px);
       width: 100%;
     }
 
-    /* Colunas roláveis */
     .col { height: 100%; overflow-y: auto; padding-bottom: 2rem; scrollbar-width: none; }
     .col::-webkit-scrollbar { display: none; }
 
-    /* --- Lado Esquerdo: Perfil --- */
-    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; margin-bottom: 1.5rem; }
+    /* Cards Gerais */
+    .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1.5rem; }
 
-    .profile-header { text-align: center; margin-bottom: 1.5rem; }
-    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 3px solid var(--primary); }
-    .profile-name-display { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.2rem; }
-    .profile-username { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
+    /* --- Stories --- */
+    .stories-container {
+      display: flex;
+      gap: 0.8rem;
+      padding: 0.5rem 0 1.2rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .stories-container::-webkit-scrollbar { display: none; }
 
-    .edit-profile-btn { background: var(--bg); color: var(--text); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; width: 100%; margin-bottom: 1rem; }
-    .edit-profile-btn:hover { background: var(--border); }
+    .story-item {
+      flex-shrink: 0;
+      width: 70px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .story-circle {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), #3b82f6);
+      padding: 3px;
+      margin-bottom: 0.4rem;
+      transition: var(--transition);
+    }
+    .story-circle:hover { transform: scale(1.05); }
+    .story-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--card);
+      overflow: hidden;
+    }
+    .story-inner img { width: 100%; height: 100%; object-fit: cover; }
+    .story-name { font-size: 0.7rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: center; border-top: 1px solid var(--border); pt: 1rem; margin-top: 1rem; padding-top: 1rem; }
-    .stat-val { font-weight: 800; color: var(--primary); }
-    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+    /* Modal de Visualizar Story */
+    #story-viewer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .story-content-box {
+      width: 90%;
+      max-width: 360px;
+      height: 80vh;
+      background: var(--primary);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+    }
+    .story-text-display { font-size: 1.8rem; font-weight: 800; color: #fff; line-height: 1.3; }
+    .story-progress { position: absolute; top: 15px; left: 15px; right: 15px; height: 3px; background: rgba(255,255,255,0.3); border-radius: 5px; overflow: hidden; }
+    .story-bar { height: 100%; background: #fff; width: 0%; }
 
-    /* Modal de edição de nome */
-    #edit-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
-    .modal-content { background: #fff; padding: 2rem; border-radius: 20px; width: 90%; max-width: 400px; }
+    /* Modal de Postar Story */
+    #story-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 150; align-items: center; justify-content: center; }
+    .story-post-card { background: var(--card); padding: 2rem; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid var(--border); }
 
-    /* --- Centro: Feed --- */
-    .create-post { margin-bottom: 1.5rem; }
-    .post-textarea { width: 100%; border: none; background: var(--bg); border-radius: 10px; padding: 1rem; font-family: inherit; font-size: 1rem; resize: none; min-height: 80px; outline: none; margin-bottom: 0.8rem; }
-    .post-textarea:focus { background: #fff; box-shadow: inset 0 0 0 2px var(--primary); }
+    /* --- Perfil --- */
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 1rem; }
+    .profile-name-display { font-size: 1.2rem; font-weight: 800; }
+    .profile-username { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem; }
+    .edit-profile-btn { background: #000; color: #fff; border: 1px solid var(--border); padding: 0.6rem; border-radius: 10px; width: 100%; margin-bottom: 1rem; }
+    .edit-profile-btn:hover { border-color: var(--primary); }
 
-    .post-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem; margin-bottom: 1rem; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* --- Feed --- */
+    .post-textarea { width: 100%; background: #000; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; color: #fff; font-family: inherit; resize: none; min-height: 90px; outline: none; margin-bottom: 0.8rem; }
+    .post-textarea:focus { border-color: var(--primary); }
 
-    .post-top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
-    .post-mini-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-    .post-info { flex: 1; }
-    .post-author { font-weight: 700; font-size: 0.95rem; }
-    .post-meta { font-size: 0.75rem; color: var(--muted); }
-    .post-text { font-size: 1rem; line-height: 1.5; color: #334155; }
-
-    .post-actions { display: flex; gap: 1rem; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.8rem; }
-    .post-btn { background: none; color: var(--muted); font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
-    .post-btn:hover { color: var(--primary); }
+    .post-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 1rem; }
+    .post-author { font-weight: 700; color: #fff; }
+    .post-meta { color: var(--muted); font-size: 0.8rem; }
+    .post-text { color: #e2e8f0; margin-top: 0.8rem; line-height: 1.5; }
+    .post-btn { background: none; color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
+    .post-btn:hover { color: #fff; }
     .post-btn.liked { color: var(--danger); }
 
-    /* --- Lado Direito: Mensagens --- */
-    .chat-card { display: flex; flex-direction: column; height: 100%; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-    .chat-header { padding: 1rem; border-bottom: 1px solid var(--border); font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
-    .chat-list { flex: 1; overflow-y: auto; padding: 0.5rem; }
-    .chat-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem; border-radius: 10px; cursor: pointer; transition: var(--transition); }
-    .chat-item:hover { background: var(--bg); }
-    .chat-item.active { background: rgba(99, 102, 241, 0.1); border-left: 4px solid var(--primary); }
-    .chat-item img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
-    .chat-item-info { flex: 1; }
-    .chat-item-name { font-weight: 700; font-size: 0.9rem; }
-    .chat-item-last { font-size: 0.75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* --- Chat --- */
+    .chat-card { background: var(--card); border: 1px solid var(--border); height: 100%; border-radius: var(--radius); display: flex; flex-direction: column; overflow: hidden; }
+    .chat-header { padding: 1.2rem; border-bottom: 1px solid var(--border); font-weight: 800; display: flex; align-items: center; gap: 0.6rem; }
+    .chat-item { padding: 0.8rem 1.2rem; display: flex; align-items: center; gap: 0.8rem; cursor: pointer; transition: var(--transition); }
+    .chat-item:hover { background: rgba(30, 58, 138, 0.1); }
+    .chat-item.active { background: rgba(30, 58, 138, 0.2); border-left: 4px solid var(--primary); }
+    .chat-item img { width: 44px; height: 44px; border-radius: 50%; }
 
     .chat-window { display: none; flex-direction: column; height: 100%; }
     .chat-window.active { display: flex; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; background: #f8fafc; }
-    .msg { max-width: 80%; padding: 0.8rem 1rem; border-radius: 15px; font-size: 0.9rem; line-height: 1.4; }
-    .msg-received { background: #fff; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; background: #000; display: flex; flex-direction: column; gap: 0.8rem; }
+    .msg { max-width: 80%; padding: 0.8rem 1rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.4; }
+    .msg-received { background: var(--card); color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
     .msg-sent { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
 
-    .chat-input-area { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; }
-    .chat-input { flex: 1; border: 1px solid var(--border); padding: 0.6rem 1rem; border-radius: 999px; outline: none; font-size: 0.9rem; }
-    .chat-send { background: var(--primary); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .chat-input-area { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 0.6rem; }
+    .chat-input { flex: 1; background: #000; border: 1px solid var(--border); padding: 0.7rem 1.2rem; border-radius: 999px; color: #fff; outline: none; }
+    .chat-send { background: var(--primary); color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
     /* Toast */
-    #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 0.8rem 1.5rem; border-radius: 999px; font-size: 0.9rem; z-index: 1000; display: none; }
+    #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 0.8rem 1.5rem; border-radius: 999px; font-weight: 600; z-index: 1000; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+
+    /* Modal de Edição de Perfil */
+    #edit-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 150; align-items: center; justify-content: center; }
+    .modal-content { background: var(--card); padding: 2rem; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid var(--border); }
 
     @media (max-width: 1000px) {
       .main-layout { grid-template-columns: 1fr; }
@@ -175,15 +235,15 @@
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
-      <h1>SocialFlow</h1>
-      <p style="color:var(--muted); margin-bottom: 2rem;">Conecte-se ao fluxo social</p>
+      <h1>Social<span>Flow</span></h1>
+      <p style="color:var(--muted); margin-bottom: 2.5rem; font-size: 0.9rem;">O fluxo social no modo escuro</p>
     </div>
     <form onsubmit="handleLogin(event)">
       <div class="form-group">
-        <label>Nome de usuário</label>
-        <input type="text" id="login-username" placeholder="ex: joao_silva" required />
+        <label>Seu apelido</label>
+        <input type="text" id="login-username" placeholder="ex: dark_flow" required />
       </div>
-      <button class="btn btn-primary" type="submit">Entrar agora</button>
+      <button class="btn btn-primary" type="submit">Acessar o Fluxo</button>
     </form>
   </div>
 </div>
@@ -191,46 +251,43 @@
 <!-- APP PRINCIPAL -->
 <div id="app">
   <nav class="navbar">
-    <div class="nav-brand">SocialFlow</div>
-    <div style="display:flex; align-items:center; gap: 1rem;">
-      <span id="nav-user-name" style="font-weight:700; font-size: 0.9rem;"></span>
-      <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:700;">Sair</button>
+    <div class="nav-brand">Social<span>Flow</span></div>
+    <div style="display:flex; align-items:center; gap: 1.2rem;">
+      <span id="nav-user-name" style="font-weight:700; font-size: 0.9rem; color: var(--muted);"></span>
+      <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:800; font-size: 0.8rem; text-transform: uppercase;">Sair</button>
     </div>
   </nav>
 
   <div class="main-layout">
     <!-- COLUNA ESQUERDA: PERFIL -->
     <aside class="col col-left">
-      <div class="card">
-        <div class="profile-header">
-          <img id="my-avatar" class="profile-avatar" src="" alt="Avatar" />
-          <div id="my-name-display" class="profile-name-display"></div>
-          <div id="my-username-display" class="profile-username"></div>
-          <button class="btn edit-profile-btn" onclick="openEditModal()">✏️ Editar Nome</button>
-        </div>
-        <div class="stats-grid">
-          <div>
-            <div class="stat-val">128</div>
-            <div class="stat-label">Seguidores</div>
-          </div>
-          <div>
-            <div class="stat-val">256</div>
-            <div class="stat-label">Seguindo</div>
-          </div>
+      <div class="card" style="text-align: center;">
+        <img id="my-avatar" class="profile-avatar" src="" alt="">
+        <div id="my-name-display" class="profile-name-display"></div>
+        <div id="my-username-display" class="profile-username"></div>
+        <button class="btn edit-profile-btn" onclick="openEditModal()">✏️ Editar Nome</button>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 0.5rem;">
+          <div><div style="font-weight:800; color:var(--primary);">842</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguidores</div></div>
+          <div><div style="font-weight:800; color:var(--primary);">321</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguindo</div></div>
         </div>
       </div>
 
-      <div class="card" style="padding: 1rem;">
-        <p style="font-size: 0.8rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 0.8rem;">Sugestões</p>
+      <div class="card">
+        <p style="font-size:0.75rem; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:1rem;">Quem seguir</p>
         <div id="suggestions-list"></div>
       </div>
     </aside>
 
     <!-- COLUNA CENTRAL: FEED -->
     <main class="col col-center">
-      <div class="card create-post">
-        <textarea id="post-input" class="post-textarea" placeholder="O que você quer compartilhar hoje?"></textarea>
-        <div style="display:flex; justify-content: flex-end;">
+      <!-- Stories Bar -->
+      <div class="stories-container" id="stories-bar"></div>
+
+      <!-- Criar Post -->
+      <div class="card" style="padding: 1.2rem;">
+        <textarea id="post-input" class="post-textarea" placeholder="O que está acontecendo no escuro?"></textarea>
+        <div style="display:flex; justify-content: flex-end; gap: 0.8rem;">
+          <button class="btn" style="background:var(--border); color:#fff; padding: 0.6rem 1.2rem; border-radius:10px; font-size:0.85rem;" onclick="openStoryModal()">✨ Novo Story</button>
           <button class="btn btn-primary" style="width:auto; padding: 0.6rem 2rem;" onclick="publishPost()">Publicar</button>
         </div>
       </div>
@@ -243,18 +300,18 @@
       <div class="chat-card">
         <div id="chat-list-view" style="display:flex; flex-direction:column; height: 100%;">
           <div class="chat-header">💬 Mensagens</div>
-          <div class="chat-list" id="chat-list"></div>
+          <div class="chat-list" id="chat-list" style="flex:1; overflow-y:auto;"></div>
         </div>
 
         <div id="chat-window-view" class="chat-window">
           <div class="chat-header">
-            <button onclick="backToChatList()" style="background:none; border:none; cursor:pointer; font-size: 1.2rem; margin-right: 0.5rem;">←</button>
-            <img id="chat-target-avatar" src="" style="width:30px; height:30px; border-radius:50%; margin-right:0.5rem;">
-            <span id="chat-target-name"></span>
+            <button onclick="backToChatList()" style="background:none; border:none; color:#fff; cursor:pointer; font-size:1.2rem;">←</button>
+            <img id="chat-target-avatar" src="" style="width:34px; height:34px; border-radius:50%;">
+            <span id="chat-target-name" style="font-size:0.95rem;"></span>
           </div>
           <div class="chat-messages" id="chat-messages"></div>
           <div class="chat-input-area">
-            <input type="text" id="chat-input" class="chat-input" placeholder="Digite uma mensagem..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Mensagem..." onkeydown="if(event.key==='Enter') sendMessage()">
             <button class="btn chat-send" onclick="sendMessage()">➤</button>
           </div>
         </div>
@@ -263,17 +320,44 @@
   </div>
 </div>
 
-<!-- MODAL EDITAR NOME -->
+<!-- MODAL EDITAR PERFIL -->
 <div id="edit-modal">
   <div class="modal-content">
-    <h3 style="margin-bottom: 1.5rem;">Editar seu nome</h3>
+    <h3 style="margin-bottom:1.5rem;">Alterar Nome</h3>
     <div class="form-group">
-      <label>Novo Nome de Exibição</label>
-      <input type="text" id="new-name-input" placeholder="Seu nome real" />
+      <label>Nome de Exibição</label>
+      <input type="text" id="new-name-input" />
     </div>
-    <div style="display:flex; gap: 1rem;">
-      <button class="btn" style="flex:1; background:var(--bg);" onclick="closeEditModal()">Cancelar</button>
+    <div style="display:flex; gap:1rem;">
+      <button class="btn" style="flex:1; background:var(--bg); border:1px solid var(--border); color:#fff;" onclick="closeEditModal()">Cancelar</button>
       <button class="btn btn-primary" style="flex:1;" onclick="saveNewName()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POSTAR STORY -->
+<div id="story-modal">
+  <div class="story-post-card">
+    <h3 style="margin-bottom:1.5rem;">Criar Story ✨</h3>
+    <div class="form-group">
+      <label>Texto do Story (Max 60 caracteres)</label>
+      <input type="text" id="story-text-input" placeholder="O que você está sentindo? 🔥" maxlength="60" />
+    </div>
+    <div style="display:flex; gap:1rem;">
+      <button class="btn" style="flex:1; background:var(--bg); border:1px solid var(--border); color:#fff;" onclick="closeStoryModal()">Fechar</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="publishStory()">Postar Story</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEWER DE STORY -->
+<div id="story-viewer" onclick="closeStoryViewer()">
+  <div class="story-progress"><div class="story-bar" id="story-bar-anim"></div></div>
+  <div class="story-content-box" id="story-box-content">
+    <p class="story-text-display" id="story-text-view"></p>
+    <div style="position:absolute; bottom:30px; display:flex; align-items:center; gap:0.8rem;">
+      <img id="story-viewer-avatar" src="" style="width:40px; height:40px; border-radius:50%; border:2px solid #fff;">
+      <span id="story-viewer-name" style="font-weight:800;"></span>
     </div>
   </div>
 </div>
@@ -285,25 +369,27 @@
    ESTADO & DADOS
    ============================================================ */
 const AVATARS = [
-  'https://i.pravatar.cc/150?img=11', 'https://i.pravatar.cc/150?img=12',
-  'https://i.pravatar.cc/150?img=13', 'https://i.pravatar.cc/150?img=14',
-  'https://i.pravatar.cc/150?img=15', 'https://i.pravatar.cc/150?img=16'
+  'https://i.pravatar.cc/150?img=1', 'https://i.pravatar.cc/150?img=2',
+  'https://i.pravatar.cc/150?img=3', 'https://i.pravatar.cc/150?img=4',
+  'https://i.pravatar.cc/150?img=5', 'https://i.pravatar.cc/150?img=6'
 ];
 
 const INITIAL_USERS = [
-  { id: 'u1', name: 'Marcos Silva', username: 'marcos_dev', avatar: AVATARS[0] },
-  { id: 'u2', name: 'Julia Costa', username: 'juliac', avatar: AVATARS[1] },
-  { id: 'u3', name: 'Rafael Souza', username: 'rafa_souza', avatar: AVATARS[2] },
-  { id: 'u4', name: 'Ana Oliveira', username: 'ana_oli', avatar: AVATARS[3] }
+  { id: 'u1', name: 'Lucas Dark', username: 'lucas_night', avatar: AVATARS[0] },
+  { id: 'u2', name: 'Elena Blue', username: 'elena_b', avatar: AVATARS[1] },
+  { id: 'u3', name: 'Vitor Storm', username: 'vitor_s', avatar: AVATARS[2] },
+  { id: 'u4', name: 'Sofia White', username: 'sofia_w', avatar: AVATARS[3] }
 ];
 
 let currentUser = null;
 let posts = [];
-let chats = {}; // { userId: [messages] }
+let stories = [];
+let chats = {};
 let activeChatUserId = null;
+let storyTimer = null;
 
 /* ============================================================
-   AUTENTICAÇÃO & ACESSO
+   ACESSO
    ============================================================ */
 function handleLogin(e) {
   e.preventDefault();
@@ -335,11 +421,12 @@ function initApp() {
 
   updateProfileUI();
   loadData();
+  renderStories();
   renderFeed();
   renderChatList();
   renderSuggestions();
 
-  showToast(`Bem-vindo ao SocialFlow! ✨`);
+  showToast(`SocialFlow: Modo Escuro Ativado 🌙`);
 }
 
 function updateProfileUI() {
@@ -356,16 +443,95 @@ function closeEditModal() { document.getElementById('edit-modal').style.display 
 function saveNewName() {
   const newName = document.getElementById('new-name-input').value.trim();
   if (newName.length < 2) return;
-
   currentUser.name = newName;
   updateProfileUI();
   closeEditModal();
-  showToast('Nome atualizado com sucesso! ✅');
-
-  // Atualiza nome nos meus posts no feed
+  showToast('Nome alterado! ✅');
   posts.forEach(p => { if (p.userId === 'me') p.author = newName; });
   saveData();
   renderFeed();
+}
+
+/* ============================================================
+   STORIES
+   ============================================================ */
+function openStoryModal() { document.getElementById('story-modal').style.display = 'flex'; }
+function closeStoryModal() { document.getElementById('story-modal').style.display = 'none'; }
+
+function publishStory() {
+  const input = document.getElementById('story-text-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const newStory = {
+    id: Date.now(),
+    userId: 'me',
+    author: currentUser.name,
+    avatar: currentUser.avatar,
+    text: text
+  };
+
+  stories.unshift(newStory);
+  input.value = '';
+  closeStoryModal();
+  saveData();
+  renderStories();
+  showToast('Story publicado! ✨');
+}
+
+function renderStories() {
+  const container = document.getElementById('stories-bar');
+  container.innerHTML = '';
+
+  // Story de exemplo se estiver vazio
+  if (stories.length === 0) {
+    stories = [
+      { id: 1, userId: 'u1', author: 'Lucas', avatar: AVATARS[0], text: 'Noite produtiva por aqui! 💻🔥' },
+      { id: 2, userId: 'u2', author: 'Elena', avatar: AVATARS[1], text: 'SocialFlow está incrível! 🚀' }
+    ];
+  }
+
+  stories.forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'story-item';
+    item.onclick = () => viewStory(s);
+    item.innerHTML = `
+      <div class="story-circle">
+        <div class="story-inner"><img src="${s.avatar}"></div>
+      </div>
+      <div class="story-name">${s.author}</div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function viewStory(story) {
+  const viewer = document.getElementById('story-viewer');
+  const bar = document.getElementById('story-bar-anim');
+  const text = document.getElementById('story-text-view');
+  const avatar = document.getElementById('story-viewer-avatar');
+  const name = document.getElementById('story-viewer-name');
+
+  viewer.style.display = 'flex';
+  text.textContent = story.text;
+  avatar.src = story.avatar;
+  name.textContent = story.author;
+
+  bar.style.width = '0%';
+  let progress = 0;
+  clearInterval(storyTimer);
+  storyTimer = setInterval(() => {
+    progress += 2;
+    bar.style.width = progress + '%';
+    if (progress >= 100) {
+      closeStoryViewer();
+    }
+  }, 60);
+}
+
+function closeStoryViewer() {
+  document.getElementById('story-viewer').style.display = 'none';
+  clearInterval(storyTimer);
 }
 
 /* ============================================================
@@ -392,7 +558,7 @@ function publishPost() {
   input.value = '';
   saveData();
   renderFeed();
-  showToast('Postagem publicada! 🚀');
+  showToast('Publicado no feed! 🚀');
 }
 
 function renderFeed() {
@@ -400,10 +566,9 @@ function renderFeed() {
   container.innerHTML = '';
 
   if (posts.length === 0) {
-    // Posts iniciais de exemplo se vazio
     posts = [
-      { id: 101, userId: 'u1', author: 'Marcos Silva', username: '@marcos_dev', avatar: AVATARS[0], content: 'Acabei de entrar no SocialFlow! A interface está sensacional. 👏', likes: 5, liked: false, time: '1h' },
-      { id: 102, userId: 'u2', author: 'Julia Costa', username: '@juliac', avatar: AVATARS[1], content: 'Alguém para conversar sobre tecnologia hoje? 💻', likes: 12, liked: false, time: '3h' }
+      { id: 101, userId: 'u1', author: 'Lucas Dark', username: '@lucas_night', avatar: AVATARS[0], content: 'O preto e azul combinam perfeitamente com esse site. 🌑💙', likes: 42, liked: false, time: '2h' },
+      { id: 102, userId: 'u2', author: 'Elena Blue', username: '@elena_b', avatar: AVATARS[1], content: 'Alguém já testou o sistema de stories? Ficou muito rápido!', likes: 15, liked: false, time: '5h' }
     ];
   }
 
@@ -411,19 +576,19 @@ function renderFeed() {
     const card = document.createElement('div');
     card.className = 'post-card';
     card.innerHTML = `
-      <div class="post-top">
-        <img class="post-mini-avatar" src="${post.avatar}" alt="">
-        <div class="post-info">
+      <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1rem;">
+        <img src="${post.avatar}" style="width:40px; height:40px; border-radius:50%;">
+        <div>
           <div class="post-author">${post.author}</div>
           <div class="post-meta">${post.username} • ${post.time}</div>
         </div>
       </div>
       <div class="post-text">${escHtml(post.content)}</div>
-      <div class="post-actions">
+      <div style="display:flex; gap:1.5rem; margin-top:1.2rem; border-top:1px solid var(--border); padding-top:0.8rem;">
         <button class="btn post-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
           ${post.liked ? '❤️' : '🤍'} ${post.likes}
         </button>
-        <button class="btn post-btn" onclick="openChat('${post.userId}')">💬 Conversar</button>
+        <button class="btn post-btn" onclick="openChat('${post.userId}')">💬 Chat</button>
       </div>
     `;
     container.appendChild(card);
@@ -441,22 +606,20 @@ function toggleLike(id) {
 }
 
 /* ============================================================
-   SISTEMA DE MENSAGENS (CHAT)
+   CHAT
    ============================================================ */
 function renderChatList() {
   const container = document.getElementById('chat-list');
   container.innerHTML = '';
-
   INITIAL_USERS.forEach(user => {
-    const lastMsg = chats[user.id] ? chats[user.id][chats[user.id].length - 1].text : 'Clique para conversar';
     const item = document.createElement('div');
     item.className = `chat-item ${activeChatUserId === user.id ? 'active' : ''}`;
     item.onclick = () => openChat(user.id);
     item.innerHTML = `
-      <img src="${user.avatar}" alt="">
-      <div class="chat-item-info">
-        <div class="chat-item-name">${user.name}</div>
-        <div class="chat-item-last">${lastMsg}</div>
+      <img src="${user.avatar}">
+      <div style="flex:1;">
+        <div style="font-weight:700; font-size:0.9rem;">${user.name}</div>
+        <div style="font-size:0.75rem; color:var(--muted);">@${user.username}</div>
       </div>
     `;
     container.appendChild(item);
@@ -464,18 +627,15 @@ function renderChatList() {
 }
 
 function openChat(userId) {
-  if (userId === 'me') { showToast('Você não pode conversar consigo mesmo! 😂'); return; }
+  if (userId === 'me') return;
   activeChatUserId = userId;
   const user = INITIAL_USERS.find(u => u.id === userId);
-
   document.getElementById('chat-list-view').style.display = 'none';
   document.getElementById('chat-window-view').classList.add('active');
-
   document.getElementById('chat-target-avatar').src = user.avatar;
   document.getElementById('chat-target-name').textContent = user.name;
-
   renderMessages();
-  renderChatList(); // Atualiza seleção na lista
+  renderChatList();
 }
 
 function backToChatList() {
@@ -487,7 +647,6 @@ function backToChatList() {
 function renderMessages() {
   const container = document.getElementById('chat-messages');
   container.innerHTML = '';
-
   const messages = chats[activeChatUserId] || [];
   messages.forEach(m => {
     const el = document.createElement('div');
@@ -502,39 +661,34 @@ function sendMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text || !activeChatUserId) return;
-
   if (!chats[activeChatUserId]) chats[activeChatUserId] = [];
-
   chats[activeChatUserId].push({ sender: 'me', text: text });
   input.value = '';
   renderMessages();
-
-  // Simular resposta automática
   setTimeout(() => {
-    chats[activeChatUserId].push({ sender: 'other', text: 'Olá! Como posso ajudar? 😊' });
+    chats[activeChatUserId].push({ sender: 'other', text: 'Entendido! 🌙' });
     if (activeChatUserId) renderMessages();
     saveData();
-  }, 1000);
-
+  }, 800);
   saveData();
 }
 
 /* ============================================================
-   UTILITÁRIOS & PERSISTÊNCIA
+   UTILITÁRIOS
    ============================================================ */
 function renderSuggestions() {
   const container = document.getElementById('suggestions-list');
   container.innerHTML = '';
   INITIAL_USERS.forEach(user => {
     const item = document.createElement('div');
-    item.style = 'display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem;';
+    item.style = 'display:flex; align-items:center; gap:0.8rem; margin-bottom:1rem;';
     item.innerHTML = `
       <img src="${user.avatar}" style="width:34px; height:34px; border-radius:50%;">
       <div style="flex:1;">
         <div style="font-size:0.85rem; font-weight:700;">${user.name}</div>
         <div style="font-size:0.7rem; color:var(--muted);">@${user.username}</div>
       </div>
-      <button class="btn" style="font-size:0.7rem; padding:0.3rem 0.6rem; background:var(--bg);" onclick="showToast('Seguindo!')">Seguir</button>
+      <button class="btn" style="font-size:0.7rem; padding:0.3rem 0.6rem; background:var(--bg); border:1px solid var(--border); color:#fff;" onclick="showToast('Seguindo!')">Seguir</button>
     `;
     container.appendChild(item);
   });
@@ -554,16 +708,15 @@ function escHtml(str) {
 }
 
 function saveData() {
-  localStorage.setItem('socialflow_posts', JSON.stringify(posts));
-  localStorage.setItem('socialflow_chats', JSON.stringify(chats));
+  localStorage.setItem('sf_posts_v4', JSON.stringify(posts));
+  localStorage.setItem('sf_stories_v4', JSON.stringify(stories));
+  localStorage.setItem('sf_chats_v4', JSON.stringify(chats));
 }
 
 function loadData() {
-  const savedPosts = localStorage.getItem('socialflow_posts');
-  if (savedPosts) posts = JSON.parse(savedPosts);
-
-  const savedChats = localStorage.getItem('socialflow_chats');
-  if (savedChats) chats = JSON.parse(savedChats);
+  const p = localStorage.getItem('sf_posts_v4'); if (p) posts = JSON.parse(p);
+  const s = localStorage.getItem('sf_stories_v4'); if (s) stories = JSON.parse(s);
+  const c = localStorage.getItem('sf_chats_v4'); if (c) chats = JSON.parse(c);
 }
 </script>
 
