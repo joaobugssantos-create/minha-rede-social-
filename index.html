@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SocialFlow &mdash; Dark Mode</title>
+  <title>SocialFlow &mdash; Iniciais</title>
   <style>
     /* ===================== RESET & VARIÁVEIS ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --primary:   #1e3a8a; /* Azul escuro profundo */
+      --primary:   #1e3a8a;
       --primary-h: #1e40af;
-      --bg:        #000000; /* Preto predominante */
-      --card:      #111827; /* Cinza muito escuro para contraste */
-      --text:      #ffffff; /* Branco */
+      --bg:        #000000;
+      --card:      #111827;
+      --text:      #ffffff;
       --muted:     #94a3b8;
       --border:    #1f2937;
       --danger:    #ef4444;
@@ -30,6 +30,25 @@
       height: 100vh;
       overflow: hidden;
     }
+
+    /* ===================== COMPONENTES DE AVATAR ===================== */
+    .avatar-initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      border-radius: 50%;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .avatar-lg { width: 80px; height: 80px; font-size: 2rem; border: 3px solid var(--primary); }
+    .avatar-md { width: 44px; height: 44px; font-size: 1.2rem; }
+    .avatar-sm { width: 40px; height: 40px; font-size: 1.1rem; }
+    .avatar-xs { width: 34px; height: 34px; font-size: 0.9rem; }
+    .avatar-story { width: 60px; height: 60px; font-size: 1.5rem; border: 2px solid #000; }
 
     /* ===================== TELA DE ACESSO ===================== */
     #auth-screen {
@@ -131,19 +150,6 @@
       transition: var(--transition);
     }
     .story-circle:hover { transform: scale(1.05); }
-    .story-inner {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--card);
-      overflow: hidden;
-    }
-    .story-inner img { width: 100%; height: 100%; object-fit: cover; }
-    .story-name { font-size: 0.7rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* Modal de Visualizar Story */
     #story-viewer {
@@ -179,8 +185,7 @@
     .story-post-card { background: var(--card); padding: 2rem; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid var(--border); }
 
     /* --- Perfil --- */
-    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 1rem; }
-    .profile-name-display { font-size: 1.2rem; font-weight: 800; }
+    .profile-name-display { font-size: 1.2rem; font-weight: 800; margin-top: 1rem; }
     .profile-username { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem; }
     .edit-profile-btn { background: #000; color: #fff; border: 1px solid var(--border); padding: 0.6rem; border-radius: 10px; width: 100%; margin-bottom: 1rem; }
     .edit-profile-btn:hover { border-color: var(--primary); }
@@ -203,7 +208,6 @@
     .chat-item { padding: 0.8rem 1.2rem; display: flex; align-items: center; gap: 0.8rem; cursor: pointer; transition: var(--transition); }
     .chat-item:hover { background: rgba(30, 58, 138, 0.1); }
     .chat-item.active { background: rgba(30, 58, 138, 0.2); border-left: 4px solid var(--primary); }
-    .chat-item img { width: 44px; height: 44px; border-radius: 50%; }
 
     .chat-window { display: none; flex-direction: column; height: 100%; }
     .chat-window.active { display: flex; }
@@ -262,7 +266,7 @@
     <!-- COLUNA ESQUERDA: PERFIL -->
     <aside class="col col-left">
       <div class="card" style="text-align: center;">
-        <img id="my-avatar" class="profile-avatar" src="" alt="">
+        <div id="my-avatar-box" style="display:flex; justify-content:center;"></div>
         <div id="my-name-display" class="profile-name-display"></div>
         <div id="my-username-display" class="profile-username"></div>
         <button class="btn edit-profile-btn" onclick="openEditModal()">✏️ Editar Nome</button>
@@ -306,7 +310,7 @@
         <div id="chat-window-view" class="chat-window">
           <div class="chat-header">
             <button onclick="backToChatList()" style="background:none; border:none; color:#fff; cursor:pointer; font-size:1.2rem;">←</button>
-            <img id="chat-target-avatar" src="" style="width:34px; height:34px; border-radius:50%;">
+            <div id="chat-target-avatar-box"></div>
             <span id="chat-target-name" style="font-size:0.95rem;"></span>
           </div>
           <div class="chat-messages" id="chat-messages"></div>
@@ -356,7 +360,7 @@
   <div class="story-content-box" id="story-box-content">
     <p class="story-text-display" id="story-text-view"></p>
     <div style="position:absolute; bottom:30px; display:flex; align-items:center; gap:0.8rem;">
-      <img id="story-viewer-avatar" src="" style="width:40px; height:40px; border-radius:50%; border:2px solid #fff;">
+      <div id="story-viewer-avatar-box"></div>
       <span id="story-viewer-name" style="font-weight:800;"></span>
     </div>
   </div>
@@ -368,17 +372,11 @@
 /* ============================================================
    ESTADO & DADOS
    ============================================================ */
-const AVATARS = [
-  'https://i.pravatar.cc/150?img=1', 'https://i.pravatar.cc/150?img=2',
-  'https://i.pravatar.cc/150?img=3', 'https://i.pravatar.cc/150?img=4',
-  'https://i.pravatar.cc/150?img=5', 'https://i.pravatar.cc/150?img=6'
-];
-
 const INITIAL_USERS = [
-  { id: 'u1', name: 'Lucas Dark', username: 'lucas_night', avatar: AVATARS[0] },
-  { id: 'u2', name: 'Elena Blue', username: 'elena_b', avatar: AVATARS[1] },
-  { id: 'u3', name: 'Vitor Storm', username: 'vitor_s', avatar: AVATARS[2] },
-  { id: 'u4', name: 'Sofia White', username: 'sofia_w', avatar: AVATARS[3] }
+  { id: 'u1', name: 'Lucas Dark', username: 'lucas_night' },
+  { id: 'u2', name: 'Elena Blue', username: 'elena_b' },
+  { id: 'u3', name: 'Vitor Storm', username: 'vitor_s' },
+  { id: 'u4', name: 'Sofia White', username: 'sofia_w' }
 ];
 
 let currentUser = null;
@@ -387,6 +385,14 @@ let stories = [];
 let chats = {};
 let activeChatUserId = null;
 let storyTimer = null;
+
+/* ============================================================
+   UTILITÁRIOS DE AVATAR
+   ============================================================ */
+function getAvatarHtml(name, sizeClass) {
+  const initial = name ? name.charAt(0).toUpperCase() : '?';
+  return `<div class="avatar-initial ${sizeClass}">${initial}</div>`;
+}
 
 /* ============================================================
    ACESSO
@@ -399,8 +405,7 @@ function handleLogin(e) {
   currentUser = {
     id: 'me',
     name: username.charAt(0).toUpperCase() + username.slice(1),
-    username: '@' + username.toLowerCase().replace(/\s+/g, '_'),
-    avatar: AVATARS[Math.floor(Math.random() * AVATARS.length)]
+    username: '@' + username.toLowerCase().replace(/\s+/g, '_')
   };
 
   initApp();
@@ -431,7 +436,7 @@ function initApp() {
 
 function updateProfileUI() {
   document.getElementById('nav-user-name').textContent = currentUser.name;
-  document.getElementById('my-avatar').src = currentUser.avatar;
+  document.getElementById('my-avatar-box').innerHTML = getAvatarHtml(currentUser.name, 'avatar-lg');
   document.getElementById('my-name-display').textContent = currentUser.name;
   document.getElementById('my-username-display').textContent = currentUser.username;
   document.getElementById('new-name-input').value = currentUser.name;
@@ -467,7 +472,6 @@ function publishStory() {
     id: Date.now(),
     userId: 'me',
     author: currentUser.name,
-    avatar: currentUser.avatar,
     text: text
   };
 
@@ -483,11 +487,10 @@ function renderStories() {
   const container = document.getElementById('stories-bar');
   container.innerHTML = '';
 
-  // Story de exemplo se estiver vazio
   if (stories.length === 0) {
     stories = [
-      { id: 1, userId: 'u1', author: 'Lucas', avatar: AVATARS[0], text: 'Noite produtiva por aqui! 💻🔥' },
-      { id: 2, userId: 'u2', author: 'Elena', avatar: AVATARS[1], text: 'SocialFlow está incrível! 🚀' }
+      { id: 1, userId: 'u1', author: 'Lucas Dark', text: 'Noite produtiva por aqui! 💻🔥' },
+      { id: 2, userId: 'u2', author: 'Elena Blue', text: 'SocialFlow está incrível! 🚀' }
     ];
   }
 
@@ -497,7 +500,7 @@ function renderStories() {
     item.onclick = () => viewStory(s);
     item.innerHTML = `
       <div class="story-circle">
-        <div class="story-inner"><img src="${s.avatar}"></div>
+        <div class="story-inner">${getAvatarHtml(s.author, 'avatar-story')}</div>
       </div>
       <div class="story-name">${s.author}</div>
     `;
@@ -509,12 +512,12 @@ function viewStory(story) {
   const viewer = document.getElementById('story-viewer');
   const bar = document.getElementById('story-bar-anim');
   const text = document.getElementById('story-text-view');
-  const avatar = document.getElementById('story-viewer-avatar');
+  const avatarBox = document.getElementById('story-viewer-avatar-box');
   const name = document.getElementById('story-viewer-name');
 
   viewer.style.display = 'flex';
   text.textContent = story.text;
-  avatar.src = story.avatar;
+  avatarBox.innerHTML = getAvatarHtml(story.author, 'avatar-sm');
   name.textContent = story.author;
 
   bar.style.width = '0%';
@@ -547,7 +550,6 @@ function publishPost() {
     userId: 'me',
     author: currentUser.name,
     username: currentUser.username,
-    avatar: currentUser.avatar,
     content: text,
     likes: 0,
     liked: false,
@@ -567,8 +569,8 @@ function renderFeed() {
 
   if (posts.length === 0) {
     posts = [
-      { id: 101, userId: 'u1', author: 'Lucas Dark', username: '@lucas_night', avatar: AVATARS[0], content: 'O preto e azul combinam perfeitamente com esse site. 🌑💙', likes: 42, liked: false, time: '2h' },
-      { id: 102, userId: 'u2', author: 'Elena Blue', username: '@elena_b', avatar: AVATARS[1], content: 'Alguém já testou o sistema de stories? Ficou muito rápido!', likes: 15, liked: false, time: '5h' }
+      { id: 101, userId: 'u1', author: 'Lucas Dark', username: '@lucas_night', content: 'O preto e azul combinam perfeitamente com esse site. 🌑💙', likes: 42, liked: false, time: '2h' },
+      { id: 102, userId: 'u2', author: 'Elena Blue', username: '@elena_b', content: 'Alguém já testou o sistema de stories? Ficou muito rápido!', likes: 15, liked: false, time: '5h' }
     ];
   }
 
@@ -577,7 +579,7 @@ function renderFeed() {
     card.className = 'post-card';
     card.innerHTML = `
       <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1rem;">
-        <img src="${post.avatar}" style="width:40px; height:40px; border-radius:50%;">
+        ${getAvatarHtml(post.author, 'avatar-sm')}
         <div>
           <div class="post-author">${post.author}</div>
           <div class="post-meta">${post.username} • ${post.time}</div>
@@ -616,7 +618,7 @@ function renderChatList() {
     item.className = `chat-item ${activeChatUserId === user.id ? 'active' : ''}`;
     item.onclick = () => openChat(user.id);
     item.innerHTML = `
-      <img src="${user.avatar}">
+      ${getAvatarHtml(user.name, 'avatar-md')}
       <div style="flex:1;">
         <div style="font-weight:700; font-size:0.9rem;">${user.name}</div>
         <div style="font-size:0.75rem; color:var(--muted);">@${user.username}</div>
@@ -632,7 +634,7 @@ function openChat(userId) {
   const user = INITIAL_USERS.find(u => u.id === userId);
   document.getElementById('chat-list-view').style.display = 'none';
   document.getElementById('chat-window-view').classList.add('active');
-  document.getElementById('chat-target-avatar').src = user.avatar;
+  document.getElementById('chat-target-avatar-box').innerHTML = getAvatarHtml(user.name, 'avatar-xs');
   document.getElementById('chat-target-name').textContent = user.name;
   renderMessages();
   renderChatList();
@@ -666,7 +668,7 @@ function sendMessage() {
   input.value = '';
   renderMessages();
   setTimeout(() => {
-    chats[activeChatUserId].push({ sender: 'other', text: 'Entendido! 🌙' });
+    chats[activeChatUserId].push({ sender: 'other', text: 'Recebido! 🌑' });
     if (activeChatUserId) renderMessages();
     saveData();
   }, 800);
@@ -683,7 +685,7 @@ function renderSuggestions() {
     const item = document.createElement('div');
     item.style = 'display:flex; align-items:center; gap:0.8rem; margin-bottom:1rem;';
     item.innerHTML = `
-      <img src="${user.avatar}" style="width:34px; height:34px; border-radius:50%;">
+      ${getAvatarHtml(user.name, 'avatar-xs')}
       <div style="flex:1;">
         <div style="font-size:0.85rem; font-weight:700;">${user.name}</div>
         <div style="font-size:0.7rem; color:var(--muted);">@${user.username}</div>
@@ -708,15 +710,15 @@ function escHtml(str) {
 }
 
 function saveData() {
-  localStorage.setItem('sf_posts_v4', JSON.stringify(posts));
-  localStorage.setItem('sf_stories_v4', JSON.stringify(stories));
-  localStorage.setItem('sf_chats_v4', JSON.stringify(chats));
+  localStorage.setItem('sf_posts_v5', JSON.stringify(posts));
+  localStorage.setItem('sf_stories_v5', JSON.stringify(stories));
+  localStorage.setItem('sf_chats_v5', JSON.stringify(chats));
 }
 
 function loadData() {
-  const p = localStorage.getItem('sf_posts_v4'); if (p) posts = JSON.parse(p);
-  const s = localStorage.getItem('sf_stories_v4'); if (s) stories = JSON.parse(s);
-  const c = localStorage.getItem('sf_chats_v4'); if (c) chats = JSON.parse(c);
+  const p = localStorage.getItem('sf_posts_v5'); if (p) posts = JSON.parse(p);
+  const s = localStorage.getItem('sf_stories_v5'); if (s) stories = JSON.parse(s);
+  const c = localStorage.getItem('sf_chats_v5'); if (c) chats = JSON.parse(c);
 }
 </script>
 
