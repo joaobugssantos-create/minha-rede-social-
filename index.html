@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SocialFlow &mdash; Iniciais</title>
+  <title>SocialFlow &mdash; Notificações</title>
   <style>
     /* ===================== RESET & VARIÁVEIS ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -106,6 +106,62 @@
     .nav-brand { font-size: 1.6rem; font-weight: 900; color: #fff; letter-spacing: -1.5px; }
     .nav-brand span { color: var(--primary); }
 
+    .nav-right { display: flex; align-items: center; gap: 1.2rem; }
+
+    /* Botão de Notificações */
+    .notif-btn {
+      position: relative;
+      background: var(--border);
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .notif-btn:hover { background: var(--primary); }
+    .notif-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 900;
+      padding: 2px 5px;
+      border-radius: 10px;
+      border: 2px solid var(--card);
+    }
+
+    /* Painel de Notificações */
+    #notif-panel {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      width: 320px;
+      max-height: 450px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 100;
+      flex-direction: column;
+      overflow: hidden;
+      animation: slideDown 0.2s ease;
+    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .notif-header { padding: 1rem; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.9rem; }
+    .notif-list { flex: 1; overflow-y: auto; scrollbar-width: none; }
+    .notif-item { padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.8rem; border-bottom: 1px solid var(--border); transition: var(--transition); }
+    .notif-item:hover { background: rgba(255,255,255,0.05); }
+    .notif-content { flex: 1; font-size: 0.8rem; line-height: 1.4; }
+    .notif-time { font-size: 0.7rem; color: var(--muted); margin-top: 0.2rem; }
+
     /* Layout principal */
     .main-layout {
       display: grid;
@@ -206,7 +262,7 @@
     .chat-card { background: var(--card); border: 1px solid var(--border); height: 100%; border-radius: var(--radius); display: flex; flex-direction: column; overflow: hidden; }
     .chat-header { padding: 1.2rem; border-bottom: 1px solid var(--border); font-weight: 800; display: flex; align-items: center; gap: 0.6rem; }
     .chat-item { padding: 0.8rem 1.2rem; display: flex; align-items: center; gap: 0.8rem; cursor: pointer; transition: var(--transition); }
-    .chat-item:hover { background: rgba(30, 58, 138, 0.1); }
+    .chat-item:hover { background: rgba(255,255,255,0.05); }
     .chat-item.active { background: rgba(30, 58, 138, 0.2); border-left: 4px solid var(--primary); }
 
     .chat-window { display: none; flex-direction: column; height: 100%; }
@@ -256,11 +312,19 @@
 <div id="app">
   <nav class="navbar">
     <div class="nav-brand">Social<span>Flow</span></div>
-    <div style="display:flex; align-items:center; gap: 1.2rem;">
-      <span id="nav-user-name" style="font-weight:700; font-size: 0.9rem; color: var(--muted);"></span>
+    <div class="nav-right">
+      <div class="notif-btn" onclick="toggleNotifPanel()">
+        🔔 <span class="notif-badge" id="notif-count">0</span>
+      </div>
       <button onclick="logout()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:800; font-size: 0.8rem; text-transform: uppercase;">Sair</button>
     </div>
   </nav>
+
+  <!-- Painel de Notificações -->
+  <div id="notif-panel">
+    <div class="notif-header">Notificações</div>
+    <div class="notif-list" id="notif-list"></div>
+  </div>
 
   <div class="main-layout">
     <!-- COLUNA ESQUERDA: PERFIL -->
@@ -271,7 +335,7 @@
         <div id="my-username-display" class="profile-username"></div>
         <button class="btn edit-profile-btn" onclick="openEditModal()">✏️ Editar Nome</button>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 0.5rem;">
-          <div><div style="font-weight:800; color:var(--primary);">842</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguidores</div></div>
+          <div><div id="my-followers-count" style="font-weight:800; color:var(--primary);">842</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguidores</div></div>
           <div><div style="font-weight:800; color:var(--primary);">321</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguindo</div></div>
         </div>
       </div>
@@ -383,6 +447,7 @@ let currentUser = null;
 let posts = [];
 let stories = [];
 let chats = {};
+let notifications = [];
 let activeChatUserId = null;
 let storyTimer = null;
 
@@ -405,7 +470,8 @@ function handleLogin(e) {
   currentUser = {
     id: 'me',
     name: username.charAt(0).toUpperCase() + username.slice(1),
-    username: '@' + username.toLowerCase().replace(/\s+/g, '_')
+    username: '@' + username.toLowerCase().replace(/\s+/g, '_'),
+    followers: 842
   };
 
   initApp();
@@ -430,6 +496,7 @@ function initApp() {
   renderFeed();
   renderChatList();
   renderSuggestions();
+  renderNotifications();
 
   showToast(`SocialFlow: Modo Escuro Ativado 🌙`);
 }
@@ -440,6 +507,7 @@ function updateProfileUI() {
   document.getElementById('my-name-display').textContent = currentUser.name;
   document.getElementById('my-username-display').textContent = currentUser.username;
   document.getElementById('new-name-input').value = currentUser.name;
+  document.getElementById('my-followers-count').textContent = currentUser.followers;
 }
 
 function openEditModal() { document.getElementById('edit-modal').style.display = 'flex'; }
@@ -455,6 +523,68 @@ function saveNewName() {
   posts.forEach(p => { if (p.userId === 'me') p.author = newName; });
   saveData();
   renderFeed();
+}
+
+/* ============================================================
+   NOTIFICAÇÕES
+   ============================================================ */
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  const isVisible = panel.style.display === 'flex';
+  panel.style.display = isVisible ? 'none' : 'flex';
+  if (!isVisible) {
+    // Ao abrir, zera o contador
+    document.getElementById('notif-count').textContent = '0';
+    document.getElementById('notif-count').style.display = 'none';
+  }
+}
+
+function addNotification(type, fromUser, postContent = '') {
+  const notif = {
+    id: Date.now(),
+    type: type, // 'like' ou 'follow'
+    from: fromUser,
+    content: postContent,
+    time: 'agora'
+  };
+  notifications.unshift(notif);
+  saveData();
+  renderNotifications();
+  
+  const badge = document.getElementById('notif-count');
+  const count = parseInt(badge.textContent) + 1;
+  badge.textContent = count;
+  badge.style.display = 'block';
+}
+
+function renderNotifications() {
+  const container = document.getElementById('notif-list');
+  container.innerHTML = '';
+  
+  if (notifications.length === 0) {
+    container.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--muted); font-size:0.8rem;">Nenhuma notificação por enquanto.</div>';
+    return;
+  }
+
+  notifications.forEach(n => {
+    const item = document.createElement('div');
+    item.className = 'notif-item';
+    let text = '';
+    if (n.type === 'like') {
+      text = `<strong>${n.from}</strong> curtiu sua postagem: "${n.content.substring(0, 20)}..."`;
+    } else {
+      text = `<strong>${n.from}</strong> começou a te seguir.`;
+    }
+    
+    item.innerHTML = `
+      ${getAvatarHtml(n.from, 'avatar-xs')}
+      <div class="notif-content">
+        ${text}
+        <div class="notif-time">${n.time}</div>
+      </div>
+    `;
+    container.appendChild(item);
+  });
 }
 
 /* ============================================================
@@ -604,6 +734,12 @@ function toggleLike(id) {
     post.likes += post.liked ? 1 : -1;
     saveData();
     renderFeed();
+    
+    // Se for meu post, gera notificação fake
+    if (post.userId === 'me' && post.liked) {
+      const randomUser = INITIAL_USERS[Math.floor(Math.random() * INITIAL_USERS.length)];
+      addNotification('like', randomUser.name, post.content);
+    }
   }
 }
 
@@ -690,10 +826,27 @@ function renderSuggestions() {
         <div style="font-size:0.85rem; font-weight:700;">${user.name}</div>
         <div style="font-size:0.7rem; color:var(--muted);">@${user.username}</div>
       </div>
-      <button class="btn" style="font-size:0.7rem; padding:0.3rem 0.6rem; background:var(--bg); border:1px solid var(--border); color:#fff;" onclick="showToast('Seguindo!')">Seguir</button>
+      <button id="follow-btn-${user.id}" class="btn" style="font-size:0.7rem; padding:0.3rem 0.6rem; background:var(--bg); border:1px solid var(--border); color:#fff;" onclick="simulateFollow('${user.id}', '${user.name}')">Seguir</button>
     `;
     container.appendChild(item);
   });
+}
+
+function simulateFollow(userId, name) {
+  const btn = document.getElementById(`follow-btn-${userId}`);
+  if (btn.textContent === 'Seguir') {
+    btn.textContent = 'Seguindo';
+    btn.style.background = 'var(--primary)';
+    showToast(`Você seguiu ${name}!`);
+    
+    // Simula notificação de volta
+    setTimeout(() => {
+      currentUser.followers++;
+      updateProfileUI();
+      addNotification('follow', name);
+      showToast(`${name} começou a te seguir também!`);
+    }, 1500);
+  }
 }
 
 function showToast(msg) {
@@ -710,15 +863,26 @@ function escHtml(str) {
 }
 
 function saveData() {
-  localStorage.setItem('sf_posts_v5', JSON.stringify(posts));
-  localStorage.setItem('sf_stories_v5', JSON.stringify(stories));
-  localStorage.setItem('sf_chats_v5', JSON.stringify(chats));
+  localStorage.setItem('sf_posts_v6', JSON.stringify(posts));
+  localStorage.setItem('sf_stories_v6', JSON.stringify(stories));
+  localStorage.setItem('sf_chats_v6', JSON.stringify(chats));
+  localStorage.setItem('sf_notifs_v6', JSON.stringify(notifications));
 }
 
 function loadData() {
-  const p = localStorage.getItem('sf_posts_v5'); if (p) posts = JSON.parse(p);
-  const s = localStorage.getItem('sf_stories_v5'); if (s) stories = JSON.parse(s);
-  const c = localStorage.getItem('sf_chats_v5'); if (c) chats = JSON.parse(c);
+  const p = localStorage.getItem('sf_posts_v6'); if (p) posts = JSON.parse(p);
+  const s = localStorage.getItem('sf_stories_v6'); if (s) stories = JSON.parse(s);
+  const c = localStorage.getItem('sf_chats_v6'); if (c) chats = JSON.parse(c);
+  const n = localStorage.getItem('sf_notifs_v6'); if (n) notifications = JSON.parse(n);
+}
+
+// Fechar painel ao clicar fora
+window.onclick = function(event) {
+  const panel = document.getElementById('notif-panel');
+  const btn = document.querySelector('.notif-btn');
+  if (event.target !== panel && !panel.contains(event.target) && event.target !== btn && !btn.contains(event.target)) {
+    panel.style.display = 'none';
+  }
 }
 </script>
 
