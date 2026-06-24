@@ -39,6 +39,9 @@
       height: 100vh;
       background: var(--bg);
       padding: 1rem;
+      z-index: 1000;
+      position: fixed;
+      inset: 0;
     }
 
     .auth-card {
@@ -256,13 +259,13 @@
     <!-- COLUNA ESQUERDA: PERFIL -->
     <aside class="col col-left">
       <div class="card" style="text-align: center;">
-        <img id="my-profile-img" class="profile-img-lg" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felipe" alt="Avatar" />
+        <img id="my-profile-img" class="profile-img-lg" src="" alt="Avatar" />
         <div id="my-name-display" class="profile-name-display"></div>
         <div id="my-username-display" class="profile-username"></div>
         <button class="btn edit-profile-btn" onclick="openEditModal()">✏️ Editar Nome</button>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 0.5rem;">
-          <div><div style="font-weight:800; color:var(--primary);">842</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguidores</div></div>
-          <div><div style="font-weight:800; color:var(--primary);">321</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguindo</div></div>
+          <div><div id="my-followers-count" style="font-weight:800; color:var(--primary);">0</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguidores</div></div>
+          <div><div id="my-following-count" style="font-weight:800; color:var(--primary);">0</div><div style="font-size:0.65rem; color:var(--muted); text-transform:uppercase;">Seguindo</div></div>
         </div>
       </div>
 
@@ -369,7 +372,7 @@ const INITIAL_USERS = [
   { id: 'u4', name: 'Sofia White', username: '@sofia_w', img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia' }
 ];
 
-let users = []; // Banco de usuários local
+let users = [];
 let currentUser = null;
 let posts = [];
 let stories = [];
@@ -418,7 +421,9 @@ function handleAuth(e, type) {
       name: name,
       username: '@' + user,
       password: pass,
-      img: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`
+      img: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`,
+      followers: 0,
+      following: 0
     };
 
     users.push(newUser);
@@ -446,6 +451,9 @@ function checkSession() {
   if (saved) {
     currentUser = JSON.parse(saved);
     initApp();
+  } else {
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
   }
 }
 
@@ -457,12 +465,12 @@ function logout() {
 }
 
 function loadUsers() {
-  const saved = localStorage.getItem('sf_users_v7');
+  const saved = localStorage.getItem('sf_users_v8');
   users = saved ? JSON.parse(saved) : [...INITIAL_USERS];
 }
 
 function saveUsers() {
-  localStorage.setItem('sf_users_v7', JSON.stringify(users));
+  localStorage.setItem('sf_users_v8', JSON.stringify(users));
 }
 
 /* ============================================================
@@ -488,6 +496,8 @@ function updateProfileUI() {
   document.getElementById('my-name-display').textContent = currentUser.name;
   document.getElementById('my-username-display').textContent = currentUser.username;
   document.getElementById('new-name-input').value = currentUser.name;
+  document.getElementById('my-followers-count').textContent = currentUser.followers || 0;
+  document.getElementById('my-following-count').textContent = currentUser.following || 0;
 }
 
 function openEditModal() { document.getElementById('edit-modal').style.display = 'flex'; }
@@ -500,7 +510,6 @@ function saveNewName() {
   currentUser.name = newName;
   currentUser.img = `https://api.dicebear.com/7.x/avataaars/svg?seed=${newName}`;
   
-  // Atualiza no banco de usuários
   loadUsers();
   const idx = users.findIndex(u => u.id === currentUser.id);
   if (idx !== -1) users[idx] = currentUser;
@@ -511,7 +520,6 @@ function saveNewName() {
   closeEditModal();
   showToast('Perfil atualizado! ✅');
   
-  // Atualiza posts antigos do usuário
   posts.forEach(p => { if (p.userId === currentUser.id) { p.author = newName; p.authorImg = currentUser.img; } });
   saveAppData();
   renderFeed();
@@ -774,15 +782,15 @@ function escHtml(str) {
 }
 
 function saveAppData() {
-  localStorage.setItem('sf_posts_v7', JSON.stringify(posts));
-  localStorage.setItem('sf_stories_v7', JSON.stringify(stories));
-  localStorage.setItem('sf_chats_v7', JSON.stringify(chats));
+  localStorage.setItem('sf_posts_v8', JSON.stringify(posts));
+  localStorage.setItem('sf_stories_v8', JSON.stringify(stories));
+  localStorage.setItem('sf_chats_v8', JSON.stringify(chats));
 }
 
 function loadAppData() {
-  const p = localStorage.getItem('sf_posts_v7'); if (p) posts = JSON.parse(p);
-  const s = localStorage.getItem('sf_stories_v7'); if (s) stories = JSON.parse(s);
-  const c = localStorage.getItem('sf_chats_v7'); if (c) chats = JSON.parse(c);
+  const p = localStorage.getItem('sf_posts_v8'); if (p) posts = JSON.parse(p);
+  const s = localStorage.getItem('sf_stories_v8'); if (s) stories = JSON.parse(s);
+  const c = localStorage.getItem('sf_chats_v8'); if (c) chats = JSON.parse(c);
 }
 
 // Inicialização
